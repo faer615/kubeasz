@@ -49,22 +49,13 @@
   when: LB_ROLE == "backup"
   tags: restart_lb
 
-- name: daemon-reload for haproxy.service
+- name: daemon-reload haproxy and keepalived service
   shell: systemctl daemon-reload
   tags: restart_lb
 
-- name: 开机启用haproxy服务
-  shell: systemctl enable haproxy
-  ignore_errors: true 
-
-- name: 重启haproxy服务
-  shell: systemctl restart haproxy
-  tags: restart_lb
-
-- name: 开机启用keepalived服务
-  shell: systemctl enable keepalived
-  ignore_errors: true
-
-- name: 重启keepalived服务
-  shell: systemctl restart keepalived
+- name: 重启haproxy和keepalived服务并设置开机启动
+  service: name={{ item }} state=restarted enabled=yes
+  with_items:
+  - haproxy
+  - keepalived
   tags: restart_lb
